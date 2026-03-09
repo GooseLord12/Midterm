@@ -8,7 +8,6 @@ ActionVault helps collectors organize, track, and showcase their action figure c
 - Upload photos for each figure
 - Track condition, value, and purchase details
 - Search and filter your collection
-- Organize figures by line, brand, or custom categories
 - Wishlist tracking
 
 ## Tech Stack
