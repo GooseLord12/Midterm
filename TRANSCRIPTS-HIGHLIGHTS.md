@@ -1,11 +1,15 @@
-## 1. Laying the Groundwork
+## 1. Requesting a feature-by-feature breakdown before even beginning to code (Session 1, early):
+Before beginnning anything in my code and instead of asking Claude to build everything at once, I asked for step-by-step explanations of all 5 of my features before writing any of that code down. This gave me a better understanding of how localStorage, modals, persistance, FileReader,array filtering and other concepts would work before implementation which set the tone for how I would processd in my project which was to understand first, then build second.
 
+## 2. Asking about modal controls and fucntionality that I didn't understand (Session 1, after Fearture 1):
+I wanted to include this step to show my process throughout this project: when working through Feature 1 (the adding and editing of figures in the collection) I didn't understand how a modal served as both an add and edit through which Claude explained openModal(null) vs openModal(fig) and how that determines the mode. This all lead to a follow up question (it wasn't super imperative but I was genuinely curious) on wheteher this was soley contingent on HTML and Claude explained how it still worked with HTML, CSS, and JavaScript to function.
 
-## 2.
+## 3. Questioning site architecture and separation concerns (Session 1, after Feature 3):
+I pushed back on what was feeling like a temporary split between the data layer and UI where Claude explained to me that keeping these 2 split was the goal and not a temporary state where swapping localStorage for a database would only mean changing 2 functions. This actually led to the store.js rework in Session 2 where I wanted to outfit a proper CRUD module to formalize the separation after revisting the transcript. I still wouldn't consider myself an expert but I have such a greater understanding of these specific concepts now.
 
-## 3.
+## 4. Systematic bug audit and asking for clarification (Session 2, mid-way):
+I asked Claude to test all features and share a bug report (I wasn't specific in asking for severity level which Claude generated for me that helped tremendously actually) and after getting 8 bugs (5 were low-level that I understood right out of the gate but 3 were medium-level that actually ended up being related) I asked for clarification and explanation on why these error handler issues were so sevre by comparisson and through the explanation, I learned that the silent features where users are unsure/get no feebcak are worse than visible issues which changed how I think about error handling which wasn't about me simply just fixing code but learning how to prioritize what matters and why while debugging.
 
-## 4.
-
-## 5.
+## 5. Working through a falsy value issue with JasaScript (Session 3, mid-way):
+This was probably the most important moment conceptually over all 3 sessions as it showed me a critical JavaScript behavipr that was causing medium-level bugs throughout my code. Claude found that $0.00 prices were disappearing from the edit form and before accepting the fix, I asked for deeper elaboration on this and to better understand it, which revealed that Javascript was treating 0 as falsy (thank you logic courses that I've taken in the past to help me even begin to undertsand these concepts) and helped me walk through a truthiness tables which showed how valie != null ? value : " would be correct ultimatley saving my code.
 
