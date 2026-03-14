@@ -13,16 +13,29 @@ ActionVault helps collectors organize, track, and showcase their action figure c
 ## Tech Stack:
 
 - HTML, CSS, JavaScript
-- Node.js (planned for backend)
 - Additional assistance provided by Claude Code
-
 
 ## Set-Up Instructions:
 
+Option 1: View the Live Site:
+1. Visit the fully-deployed app on Netlify:
+That's it, as simple as that!
 
 
-## Provisos? Lim
+Option 2: Run locally:
+1. Clone the repositor:
+git clone https://github.com/GooseLord12/DIG4503-Week8.git
+2. Open index.html in any modern browser
+There are no dependencies, servers, or build tools required with data being stored in localStorage
 
+## Bugs/Limitations
+
+- localStorage has storage limitations and clearing the browser data deletes the entire collection
+- No user account as of yet
+- No export/import as of yet
+- No sorting as of yet, figures can be searched and filtered but sorting by name, date added, value, etc. has yet to be implemented
+- No shareable URL for collection or wishlist
+- Image handling is not optimized to be stored as a server-based upload, low-resolution uploading loclally
 
 ## What I Learned?
 
