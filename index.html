@@ -9,11 +9,167 @@
 </head>
 
 <body>
-  <div class="landing">
-    <h1 class="logo">ActionVault</h1>
-    <p class="tagline">Catalogue and manage your action figure collection! Make your collecting action-packed!</p>
-    <a class="btn" href="#">Get Started</a>
+  <!-- Landing Section -->
+  <div class="landing" id="landing">
+    <div class="landing-content">
+      <div class="logo-icon">&#9889;</div>
+      <h1 class="logo">ActionVault</h1>
+      <p class="tagline">Catalogue and manage your action figure collection. Make your collecting action-packed!</p>
+      <a class="btn landing-btn" href="#" id="get-started-btn">Get Started</a>
+    </div>
   </div>
+
+  <!-- App Section (hidden until Get Started is clicked) -->
+  <div class="app hidden" id="app">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <span class="nav-logo">ActionVault</span>
+      <button class="btn" id="add-figure-btn">+ Add Figure</button>
+    </nav>
+
+    <!-- Collection Grid -->
+    <main class="collection-container">
+      <!-- View Tabs -->
+      <div class="view-tabs">
+        <button class="view-tab active" id="tab-collection">My Collection</button>
+        <button class="view-tab" id="tab-wishlist">My Wishlist</button>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div class="filter-bar">
+        <input type="text" id="search-input" class="filter-input" placeholder="Search by name, brand, or series...">
+        <select id="filter-type" class="filter-select">
+          <option value="">All Types</option>
+        </select>
+        <select id="filter-brand" class="filter-select">
+          <option value="">All Brands</option>
+        </select>
+      </div>
+      <p class="results-count hidden" id="results-count"></p>
+      <div class="collection-grid" id="collection-grid">
+        <!-- Figure cards rendered here by JS -->
+      </div>
+      <p class="empty-message hidden" id="empty-message">
+        No figures yet. Click <strong>+ Add Figure</strong> to start your collection!
+      </p>
+    </main>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-title">Add Figure</h2>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <form id="figure-form">
+        <label for="fig-name">Name *</label>
+        <input type="text" id="fig-name" required placeholder="e.g. Boba Fett">
+
+        <label for="fig-brand">Brand</label>
+        <input type="text" id="fig-brand" placeholder="e.g. Hasbro">
+
+        <label for="fig-series">Series / Line</label>
+        <input type="text" id="fig-series" placeholder="e.g. Star Wars Black Series">
+
+        <label for="fig-year">Year</label>
+        <input type="number" id="fig-year" placeholder="e.g. 2020" min="1900" max="2099">
+
+        <label for="fig-type">Type</label>
+        <select id="fig-type">
+          <option value="">-- Select --</option>
+          <option value="3.75-inch">3.75-inch</option>
+          <option value="6-inch">6-inch</option>
+          <option value="12-inch">12-inch</option>
+          <option value="Statue">Statue</option>
+          <option value="Model Kit">Model Kit</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <div class="wishlist-toggle">
+          <label class="checkbox-label">
+            <input type="checkbox" id="fig-wishlist">
+            <span>Add to Wishlist</span>
+          </label>
+        </div>
+
+        <!-- Wishlist-only fields (hidden when not a wishlist item) -->
+        <div class="wishlist-fields hidden" id="wishlist-fields">
+          <div class="form-row">
+            <div class="form-col">
+              <label for="fig-priority">Priority</label>
+              <select id="fig-priority">
+                <option value="">-- Select --</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+            <div class="form-col">
+              <label for="fig-target-price">Target Price ($)</label>
+              <input type="number" id="fig-target-price" placeholder="0.00" min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+
+        <label for="fig-image">Photo</label>
+        <input type="file" id="fig-image" accept="image/*">
+        <div class="image-preview hidden" id="image-preview">
+          <img id="image-preview-img" src="" alt="Preview">
+          <button type="button" class="remove-image-btn" id="remove-image-btn">&times;</button>
+        </div>
+
+        <!-- Owned-only fields (hidden when adding to wishlist) -->
+        <div id="owned-fields">
+          <label for="fig-condition">Condition</label>
+          <select id="fig-condition">
+            <option value="">-- Select --</option>
+            <option value="Mint">Mint</option>
+            <option value="Near Mint">Near Mint</option>
+            <option value="Good">Good</option>
+            <option value="Fair">Fair</option>
+            <option value="Poor">Poor</option>
+          </select>
+
+          <div class="form-row">
+            <div class="form-col">
+              <label for="fig-purchase-price">Purchase Price ($)</label>
+              <input type="number" id="fig-purchase-price" placeholder="0.00" min="0" step="0.01">
+            </div>
+            <div class="form-col">
+              <label for="fig-current-value">Current Value ($)</label>
+              <input type="number" id="fig-current-value" placeholder="0.00" min="0" step="0.01">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-col">
+              <label for="fig-purchase-date">Purchase Date</label>
+              <input type="date" id="fig-purchase-date">
+            </div>
+            <div class="form-col">
+              <label for="fig-purchase-location">Purchased From</label>
+              <input type="text" id="fig-purchase-location" placeholder="e.g. Target, eBay">
+            </div>
+          </div>
+        </div>
+
+        <label for="fig-notes">Notes</label>
+        <textarea id="fig-notes" rows="3" placeholder="Any extra details..."></textarea>
+
+        <!-- Hidden field to track which figure is being edited -->
+        <input type="hidden" id="fig-id">
+
+        <div class="form-actions">
+          <button type="submit" class="btn">Save</button>
+          <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="store.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
