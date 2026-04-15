@@ -40,3 +40,33 @@ There are no dependencies, servers, or build tools required with data being stor
 ## What I Learned?
 
 Through this Midterm Project of developing ActionVailt, although I had been working through the iteration process over the past 4-5 weeks on various projects, I truly learned how impactful iterative coding and instruction is in order to fully get a grasp on understanding the code that is being generated as well as bugs and broken code especially on a large-scale project such as this. For example, by taking the time to iteravely revisit what Claude had suggested by asking to test the code that had been delivered and ask clarifying questions, I was able to discover that JavaScript was indeed treating the numerical value of 0 as a faulty value which was resulting in missing prices ($0.00) and ultimatley discoved the proper way to format my syntax to avoid this little quirk. I wanted to provide specific example of this but in a general sense, being able to think through decisions made by Claude and push-back or ask for clarification has allowed me to become a stronger developer who can properly apply these concepts and learnings to other projects. Additionally, I've also learned how to manage working on a larger-scale project over multiple sessions and how to pick up and seamlessly continue after prolonged breaks. A combination of saved transcripts (believe me, I probably oversaved just so I wouldn't lose any information) and refreshing hsitroy in the terminal truly kept me on track and helped me deliver a seamless project over a longer development period without a headache and made streamlining my development incredibly easy.
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+## Week 12 README
+
+## What Does JARVIS (AI Chatbot) Do?
+
+JARVIS is an AI Chatbot (lovingly named after Tony Stark's AI system in the MCU films) that answeres user questions about ActionVault itself. For example, Jarvis can answer questions on how the wishlist works, how to add figures, how to search and filter items, storage questions etc. due to JARVIS understanding the entire data model and domain of ActionVault. Additionally, JARVIS helps collectors by answering general action figure questions such as market advice, brand comparisons, display advice, etc. to give collectors an informed and wholistic view of the curremt action figure market. A local key-word tagger helps categorizes questions. Everything in JARVIS is local working from Gemma 4 through Ollama with no accounts, API keys, or data leaving the local machine.
+
+## What API Service Does JARVIS Use?
+
+JARVIS uses the Ollama API, specifically the /api/chat endpoint called from localhost:11434 along wirh response from Gemma 4.
+
+
+## How to Run JARVIS
+
+Prerequisites:
+-Node.js installed (version 18 or higher)
+-Ollama installed
+
+Steps
+1. Pull Ollama AI:
+ollama pull gemma4:e2b
+2. Check to see if Ollama is running:
+ollama serve
+3. Start ActionVault server:
+node server.js
+4. Open the ActionVBault app:
+http://localhost:3000
+5. Click the speech bubble in the bottom-right conere to talk to JARVIS
