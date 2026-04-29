@@ -42,7 +42,7 @@ const tabCollection = document.getElementById('tab-collection');
 const tabWishlist = document.getElementById('tab-wishlist');
 
 // Tracks which view is active: 'collection' or 'wishlist'
-var currentView = 'collection';
+let currentView = 'collection';
 
 // Filter controls
 const searchInput = document.getElementById('search-input');
@@ -206,9 +206,9 @@ document.addEventListener('keydown', function (e) {
 figureForm.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  var editingId = figId.value;
+  const editingId = figId.value;
 
-  var figureData = {
+  const figureData = {
     name: figName.value.trim(),
     brand: figBrand.value.trim(),
     series: figSeries.value.trim(),
@@ -226,12 +226,9 @@ figureForm.addEventListener('submit', function (e) {
     targetPrice: figWishlist.checked && figTargetPrice.value !== '' ? Number(figTargetPrice.value) : null
   };
 
-  var success;
-  if (editingId) {
-    success = Store.figures.update(Number(editingId), figureData);
-  } else {
-    success = Store.figures.create(figureData);
-  }
+  const success = editingId
+    ? Store.figures.update(Number(editingId), figureData)
+    : Store.figures.create(figureData);
 
   // If save failed (e.g. storage full), keep the modal open so the user
   // doesn't lose their input
@@ -253,55 +250,72 @@ function deleteFigure(id) {
 // ---- Search & Filter ----
 
 function getFilteredFigures(allFigures) {
-  var search = searchInput.value.toLowerCase().trim();
-  var selectedType = filterType.value;
-  var selectedBrand = filterBrand.value;
+  const search = searchInput.value.toLowerCase().trim();
+  const selectedType = filterType.value.toLowerCase();
+  const selectedBrand = filterBrand.value.toLowerCase();
 
   return allFigures.filter(function (fig) {
     // Text search: matches name, brand, or series
-    var matchesSearch = !search ||
+    const matchesSearch = !search ||
       fig.name.toLowerCase().includes(search) ||
       (fig.brand && fig.brand.toLowerCase().includes(search)) ||
       (fig.series && fig.series.toLowerCase().includes(search));
 
-    // Dropdown filters
-    var matchesType = !selectedType || fig.type === selectedType;
-    var matchesBrand = !selectedBrand || fig.brand === selectedBrand;
+    // Dropdown filters — case-insensitive so "Hasbro" and "hasbro" match
+    const matchesType = !selectedType ||
+      (fig.type && fig.type.toLowerCase() === selectedType);
+    const matchesBrand = !selectedBrand ||
+      (fig.brand && fig.brand.toLowerCase() === selectedBrand);
 
     return matchesSearch && matchesType && matchesBrand;
   });
 }
 
 function populateFilterDropdowns(figures) {
-  // Gather unique types and brands from the full collection
-  var types = [];
-  var brands = [];
+  // Dedupe types and brands case-insensitively, preserving the first-seen
+  // original casing for display (so "Hasbro" wins over a later "hasbro").
+  const typeMap = new Map(); // lowercase key → original case value
+  const brandMap = new Map();
 
   figures.forEach(function (fig) {
-    if (fig.type && types.indexOf(fig.type) === -1) types.push(fig.type);
-    if (fig.brand && brands.indexOf(fig.brand) === -1) brands.push(fig.brand);
+    if (fig.type && !typeMap.has(fig.type.toLowerCase())) {
+      typeMap.set(fig.type.toLowerCase(), fig.type);
+    }
+    if (fig.brand && !brandMap.has(fig.brand.toLowerCase())) {
+      brandMap.set(fig.brand.toLowerCase(), fig.brand);
+    }
   });
 
-  types.sort();
-  brands.sort();
+  const types = Array.from(typeMap.values()).sort();
+  const brands = Array.from(brandMap.values()).sort();
 
   // Preserve current selection
-  var currentType = filterType.value;
-  var currentBrand = filterBrand.value;
+  const currentType = filterType.value;
+  const currentBrand = filterBrand.value;
 
-  // Rebuild type dropdown
-  filterType.innerHTML = '<option value="">All Types</option>';
-  types.forEach(function (t) {
-    filterType.innerHTML += '<option value="' + escapeHtml(t) + '">' + escapeHtml(t) + '</option>';
-  });
-  filterType.value = currentType;
+  // Rebuild type dropdown using DOM API so any special characters
+  // (quotes, angle brackets) in user-entered values can't break the option HTML
+  rebuildSelect(filterType, 'All Types', types, currentType);
+  rebuildSelect(filterBrand, 'All Brands', brands, currentBrand);
+}
 
-  // Rebuild brand dropdown
-  filterBrand.innerHTML = '<option value="">All Brands</option>';
-  brands.forEach(function (b) {
-    filterBrand.innerHTML += '<option value="' + escapeHtml(b) + '">' + escapeHtml(b) + '</option>';
+// Helper: rebuild a <select> with a default empty option followed by the given values
+function rebuildSelect(selectEl, defaultLabel, values, currentValue) {
+  selectEl.innerHTML = '';
+
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = '';
+  defaultOpt.textContent = defaultLabel;
+  selectEl.appendChild(defaultOpt);
+
+  values.forEach(function (v) {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    selectEl.appendChild(opt);
   });
-  filterBrand.value = currentBrand;
+
+  selectEl.value = currentValue;
 }
 
 // Re-render whenever any filter control changes
@@ -312,11 +326,11 @@ filterBrand.addEventListener('change', function () { renderCollection(); });
 // ---- Render Collection Grid ----
 
 function renderCollection() {
-  var allFigures = Store.figures.getAll();
+  const allFigures = Store.figures.getAll();
   collectionGrid.innerHTML = '';
 
   // Filter by current view tab first
-  var viewFigures = allFigures.filter(function (fig) {
+  const viewFigures = allFigures.filter(function (fig) {
     return currentView === 'wishlist' ? fig.isWishlist : !fig.isWishlist;
   });
 
@@ -342,10 +356,10 @@ function renderCollection() {
   populateFilterDropdowns(viewFigures);
 
   // Apply search + filters
-  var filtered = getFilteredFigures(viewFigures);
+  const filtered = getFilteredFigures(viewFigures);
 
   // Show results count when filters are active
-  var filtersActive = searchInput.value.trim() || filterType.value || filterBrand.value;
+  const filtersActive = searchInput.value.trim() || filterType.value || filterBrand.value;
   if (filtersActive) {
     resultsCount.textContent = 'Showing ' + filtered.length + ' of ' + viewFigures.length + ' figures';
     resultsCount.classList.remove('hidden');
@@ -375,7 +389,7 @@ function renderCollection() {
     if (fig.isWishlist) {
       // Wishlist card: show priority badge and target price
       if (fig.priority) {
-        var prioClass = 'priority-' + fig.priority.toLowerCase();
+        const prioClass = 'priority-' + fig.priority.toLowerCase();
         details += '<span class="priority-badge ' + prioClass + '">' + escapeHtml(fig.priority) + ' Priority</span>';
       }
       if (fig.targetPrice != null) {
@@ -384,11 +398,11 @@ function renderCollection() {
     } else {
       // Collection card: show condition badge and price info
       if (fig.condition) {
-        var condClass = 'condition-' + fig.condition.toLowerCase().replace(' ', '-');
+        const condClass = 'condition-' + fig.condition.toLowerCase().replace(' ', '-');
         details += '<span class="condition-badge ' + condClass + '">' + escapeHtml(fig.condition) + '</span>';
       }
       if (fig.purchasePrice != null || fig.currentValue != null) {
-        var priceText = '';
+        let priceText = '';
         if (fig.purchasePrice != null) priceText += 'Paid $' + fig.purchasePrice.toFixed(2);
         if (fig.purchasePrice != null && fig.currentValue != null) priceText += ' · ';
         if (fig.currentValue != null) priceText += 'Value $' + fig.currentValue.toFixed(2);
@@ -397,12 +411,12 @@ function renderCollection() {
     }
 
     // Show uploaded photo or placeholder icon
-    var cardImageContent = fig.image
+    const cardImageContent = fig.image
       ? '<div class="card-image"><img src="' + fig.image + '" alt="' + escapeHtml(fig.name) + '"></div>'
       : '<div class="card-image">&#128126;</div>';
 
     // Build action buttons
-    var actionButtons =
+    let actionButtons =
       '<button class="card-btn card-btn-edit" data-id="' + fig.id + '">Edit</button>' +
       '<button class="card-btn card-btn-delete" data-id="' + fig.id + '">Delete</button>';
 
@@ -432,7 +446,7 @@ function renderCollection() {
     });
 
     // Mark as Owned button (wishlist only)
-    var ownBtn = card.querySelector('.card-btn-own');
+    const ownBtn = card.querySelector('.card-btn-own');
     if (ownBtn) {
       ownBtn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -447,7 +461,7 @@ function renderCollection() {
 // ---- Mark as Owned (Wishlist → Collection) ----
 
 function markAsOwned(id) {
-  var fig = Store.figures.getById(id);
+  const fig = Store.figures.getById(id);
   if (!fig) return;
 
   // Move from wishlist to collection
@@ -475,12 +489,12 @@ function escapeHtml(text) {
 // Resize an image to fit within maxWidth, then return as compressed JPEG data URL.
 // This keeps localStorage usage manageable (~30-50KB per image instead of 3-4MB).
 function resizeImage(dataUrl, maxWidth, callback) {
-  var isPng = dataUrl.indexOf('data:image/png') === 0;
-  var img = new Image();
+  const isPng = dataUrl.indexOf('data:image/png') === 0;
+  const img = new Image();
 
   img.onload = function () {
-    var width = img.width;
-    var height = img.height;
+    let width = img.width;
+    let height = img.height;
 
     // Only shrink, never enlarge
     if (width > maxWidth) {
@@ -488,10 +502,10 @@ function resizeImage(dataUrl, maxWidth, callback) {
       width = maxWidth;
     }
 
-    var canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    var ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
     ctx.drawImage(img, 0, 0, width, height);
 
     // Preserve PNG transparency; compress everything else as JPEG
