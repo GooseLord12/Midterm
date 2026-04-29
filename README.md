@@ -1,72 +1,91 @@
-# ActionVault Project Description:
+# ActionVault
 
-ActionVault helps collectors organize, track, and showcase their action figure collections. Whether you collect vintage Star Wars figures, Marvel Legends, model kits, or any other line, ActionVault gives you a central place to manage it all! Be it updating figure listings/conditions, sorting through your collection or simply building your own wishlist, these are but some of ActionValuts features that can all be operated within the app and ActionValut's sleek, yet impactful UI will alow users to navigate these components with ease.
+ActionVault helps collectors organize, track, and showcase their action figure collections. Whether you collect vintage Star Wars figures, Marvel Legends, model kits, or any other line, ActionVault gives you a central place to manage it all. Update figure listings and conditions, sort through your collection, build a wishlist, and chat with JARVIS (a built-in AI assistant) — all through a sleek, intuitive UI.
 
-## ActionVault Features:
+![ActionVault landing page](actionvault.png)
+
+## Live Demo
+
+**Deployed app:** https://superb-narwhal-e765f1.netlify.app/
+
+> The deployed version runs the full app **except** for the JARVIS chatbot, which requires a local Node server and a local Ollama model. To use JARVIS, follow the local setup steps below.
+
+## Features
 
 - Add and edit action figures in your collection
-- Upload photos for each figure
-- Track condition, value, and purchase details
-- Search and filter your collection
-- Wishlist tracking
+- Upload photos for each figure (auto-resized and compressed)
+- Track condition, value, purchase date and location, and notes
+- Search and filter your collection by name, brand, series, or type
+- Wishlist tracking with priority levels (High, Medium, Low) and target prices
+- One-click conversion of a wishlist item to a collection item
+- JARVIS — a local AI chatbot that answers questions about both ActionVault and the broader action figure collecting market
 
-## Tech Stack:
+## Tech Stack
 
-- HTML, CSS, JavaScript
-- Additional assistance provided by Claude Code
+- HTML, CSS, JavaScript (vanilla, no framework)
+- Node.js for the local dev server and Ollama proxy
+- Ollama API + Gemma model (powers JARVIS, runs entirely locally)
+- localStorage for data persistence
+- Built with assistance from Claude Code
 
-## Set-Up Instructions:
+## Setup
 
-Option 1: View the Live Site:
-1. Visit the fully-deployed app on Netlify:
-That's it, as simple as that!
+### Option 1 — View the deployed app
 
+Visit https://superb-narwhal-e765f1.netlify.app/ in any modern browser. No setup required.
 
-Option 2: Run locally:
-1. Clone the repositor:
-git clone https://github.com/GooseLord12/DIG4503-Week8.git
-2. Open index.html in any modern browser
-There are no dependencies, servers, or build tools required with data being stored in localStorage
+### Option 2 — Run locally
 
-## Bugs/Limitations
+1. Clone the repository:
+   ```
+   git clone https://github.com/GooseLord12/Midterm.git
+   ```
+2. Open `index.html` in any modern browser.
 
-- localStorage has storage limitations and clearing the browser data deletes the entire collection
-- No user account as of yet
-- No export/import as of yet
-- No sorting as of yet, figures can be searched and filtered but sorting by name, date added, value, etc. has yet to be implemented
-- No shareable URL for collection or wishlist
-- Image handling is not optimized to be stored as a server-based upload, low-resolution uploading loclally
+No dependencies, build tools, or servers are required for the core app — data is stored in localStorage.
 
-## What I Learned?
+### Option 3 — Run locally with JARVIS (the AI chatbot)
 
-Through this Midterm Project of developing ActionVailt, although I had been working through the iteration process over the past 4-5 weeks on various projects, I truly learned how impactful iterative coding and instruction is in order to fully get a grasp on understanding the code that is being generated as well as bugs and broken code especially on a large-scale project such as this. For example, by taking the time to iteravely revisit what Claude had suggested by asking to test the code that had been delivered and ask clarifying questions, I was able to discover that JavaScript was indeed treating the numerical value of 0 as a faulty value which was resulting in missing prices ($0.00) and ultimatley discoved the proper way to format my syntax to avoid this little quirk. I wanted to provide specific example of this but in a general sense, being able to think through decisions made by Claude and push-back or ask for clarification has allowed me to become a stronger developer who can properly apply these concepts and learnings to other projects. Additionally, I've also learned how to manage working on a larger-scale project over multiple sessions and how to pick up and seamlessly continue after prolonged breaks. A combination of saved transcripts (believe me, I probably oversaved just so I wouldn't lose any information) and refreshing hsitroy in the terminal truly kept me on track and helped me deliver a seamless project over a longer development period without a headache and made streamlining my development incredibly easy.
+The chatbot requires a local Node server and a local Ollama model.
 
-----------------------------------------------------------------------------------------------------------------------------------------
+**Prerequisites:**
+- Node.js 18 or higher
+- [Ollama](https://ollama.com/) installed and running
 
-## Week 12 README
+**Steps:**
+1. Pull the Gemma model used by ActionVault:
+   ```
+   ollama pull gemma4:e2b
+   ```
+2. Make sure Ollama is running:
+   ```
+   ollama serve
+   ```
+3. Start the ActionVault server:
+   ```
+   node server.js
+   ```
+4. Open the app at http://localhost:3000
+5. Click the speech-bubble button in the bottom-right corner to chat with JARVIS.
 
-## What Does JARVIS (AI Chatbot) Do?
+## What JARVIS Does
 
-JARVIS is an AI Chatbot (lovingly named after Tony Stark's AI system in the MCU films) that answeres user questions about ActionVault itself. For example, Jarvis can answer questions on how the wishlist works, how to add figures, how to search and filter items, storage questions etc. due to JARVIS understanding the entire data model and domain of ActionVault. Additionally, JARVIS helps collectors by answering general action figure questions such as market advice, brand comparisons, display advice, etc. to give collectors an informed and wholistic view of the curremt action figure market. A local key-word tagger helps categorizes questions. Everything in JARVIS is local working from Gemma 4 through Ollama with no accounts, API keys, or data leaving the local machine.
+JARVIS (lovingly named after Tony Stark's AI in the MCU) is an AI chatbot that answers user questions about ActionVault itself — how the wishlist works, how to add figures, how search and filter behave, where data is stored, and more — because JARVIS understands the entire data model and domain of ActionVault. It is also a knowledgeable companion for the broader action figure collecting market: market advice, brand comparisons, display tips, terminology, and more.
 
-## What API Service Does JARVIS Use?
+A local keyword tagger categorizes incoming questions before sending them to the model. Everything runs locally through the Gemma model via Ollama — no accounts, no API keys, and no data leaves your machine.
 
-JARVIS uses the Ollama API, specifically the /api/chat endpoint called from localhost:11434 along wirh response from Gemma 4.
+JARVIS uses the Ollama `/api/chat` endpoint at `localhost:11434`.
 
+## Known Limitations
 
-## How to Run JARVIS
+- localStorage has a ~5MB limit, and clearing browser data will delete the collection
+- No user accounts, cloud sync, or shareable URLs
+- No export or import
+- No sorting yet — figures can be searched and filtered, but not sorted by name, date added, value, etc.
+- Image uploads are stored in localStorage as low-resolution data URLs (no server-based image hosting)
 
-Prerequisites:
--Node.js installed (version 18 or higher)
--Ollama installed
+## What I Learned
 
-Steps
-1. Pull Ollama AI:
-ollama pull gemma4:e2b
-2. Check to see if Ollama is running:
-ollama serve
-3. Start ActionVault server:
-node server.js
-4. Open the ActionVBault app:
-http://localhost:3000
-5. Click the speech bubble in the bottom-right conere to talk to JARVIS
+Through this midterm project of developing ActionVault, although I had been working through the iteration process over the past 4-5 weeks on various projects, I truly learned how impactful iterative coding and instruction is in order to fully grasp the code being generated, as well as bugs and broken code that come up — especially on a large-scale project like this. For example, by taking the time to iteratively revisit what Claude had suggested, asking it to test the code that had been delivered, and asking clarifying questions, I was able to discover that JavaScript was treating the numerical value of 0 as a falsy value, which was resulting in missing prices ($0.00). From there I figured out the proper way to format my syntax to avoid this little quirk. In a general sense, being able to think through decisions made by Claude and push back or ask for clarification has allowed me to become a stronger developer who can properly apply these concepts and learnings to other projects.
+
+I also learned how to manage working on a larger-scale project over multiple sessions and how to pick up and seamlessly continue after prolonged breaks. A combination of saved transcripts (believe me, I probably oversaved just so I wouldn't lose any information) and refreshing history in the terminal truly kept me on track and helped me deliver a polished project over a longer development period without a headache.
